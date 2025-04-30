@@ -1,45 +1,53 @@
 from pathlib import Path
-import json ##importacao das bibliotecas
+import json
 
-path = Path('user.json') ##definindo path do json
+path = Path('user.json')
 
-##login com uma mensagem de boas vindas
-def login(data):
-    if path.exists():
-        info = json.loads(data)
-        ver_login = input('Bem vindo de volta! Informe seu CPF: ')
-        if ver_login == info['CPF']:
-            print(f"Bem vindo de volta, {info['nome_completo']}")
 
-#cadastro e armazenamento de informações                            
+def login(users):
+    CPF_ver = input('Bem vindo de volta, informe seu CPF: ')
+    for user in users:
+        if CPF_ver == user['CPF']:
+            print(f"Bem vindo de volta, {user['nome_completo'].title()}")
+                       
+                            
 def cadastro():
-    usuario = {
-        'nome_completo': input('Digite seu nome completo: '),
-        'idade': input('Digite sua idade: '),
-        'localizacao': input('Digite sua localizacao '),
-        'CPF': input('Digite seu CPF: ')
-    }
+    if path.exists():
+        brute_info = path.read_text()
+        users = json.loads(brute_info)       
+        usuario = {
+                'nome_completo': input('Digite seu nome completo: '),
+                'idade': input('Digite sua idade: '),
+                'localizacao': input('Digite sua localizacao '),
+                'CPF': input('Digite seu CPF: ')
+            }
 
-    data = json.dumps(usuario)
-    path.write_text(data)
-    print('Seu cadastro foi concluido')
-    return data
+        users.append(usuario)
+        content = json.dumps(users)
+        path.write_text(content)
+         
+            
+    else:    
+        usuario = {
+                'nome_completo': input('Digite seu nome completo: '),
+                'idade': input('Digite sua idade: '),
+                'localizacao': input('Digite sua localizacao '),
+                'CPF': input('Digite seu CPF: ')
+            }
 
-##verificação para cadastrar ou logar-se
+        users = [usuario]
+        content = json.dumps(users)
+        path.write_text(content)    
+        
+    return users        
+            
 
-initial_ver = input('Você já possui uma conta? Digite SIM ou NAO: ')
-if initial_ver == 'NAO': ##redireciona para criar uma conta
+
+initial_ver = input('Você já possui uma conta? Digite SIM ou NAO: ').upper()
+if initial_ver == 'NAO':
     cadastro()
 
-if initial_ver == 'SIM': ##captura as informações e redireciona para login    
-    data = path.read_text()
-    login(data)   
-    
-    
-
-
-
-
-
-
-
+if initial_ver == 'SIM':    
+    info = path.read_text()
+    users = json.loads(info)
+    login(users)
