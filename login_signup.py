@@ -10,13 +10,13 @@ def login(users):
         for CPF in database:
             if CPF == CPF_ver:
                 print(f'Bem vindo, {database[CPF]["nome_completo"]}!')
-                action = input(f'Por favor, digite a ação desejada: SACAR, DEPOSITAR ou EXTRATO: ')
+                action = input(f'Por favor, digite a ação desejada: SACAR, DEPOSITAR ou EXTRATO: ').upper()
                 if action == 'SACAR':
-                    saque()
+                    saque(CPF_ver, users)
                 elif action == 'DEPOSITAR':    
                     depositar(CPF_ver, users)
                 elif action == 'EXTRATO':    
-                    extrato()    
+                    extrato(CPF_ver, users)    
 
     return CPF_ver               
                       
@@ -54,6 +54,7 @@ def cadastro():
         content = json.dumps(users)
         path.write_text(content)    
         
+    print('Seu cadastro foi criado com sucesso!')    
     return users        
             
 def depositar(CPF_ver, users):
@@ -65,6 +66,22 @@ def depositar(CPF_ver, users):
                 content = json.dumps(users)
                 path.write_text(content) 
                 print(f'{dep_valor} foi depositado com sucesso!')
+
+def saque(CPF_ver, users):
+    saque = int(input('Digite a quantia a ser depositada: '))
+    for database in users:
+        for CPF in database:
+            if CPF == CPF_ver:
+                database[CPF]["saldo"] = database[CPF]["saldo"] - saque
+                content = json.dumps(users)
+                path.write_text(content) 
+                print(f'{saque} foi sacado com sucesso!')
+
+def extrato(CPF_ver, users):
+    for database in users:
+        for CPF in database:
+            if CPF == CPF_ver:
+                print(f'Seu saldo é {database[CPF]['saldo']}')
 
 
 initial_ver = input('Você já possui uma conta? Digite SIM ou NAO: ').upper() #INICIO DO CÓDIGO
