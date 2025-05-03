@@ -10,6 +10,15 @@ def login(users):
         for CPF in database:
             if CPF == CPF_ver:
                 print(f'Bem vindo, {database[CPF]["nome_completo"]}!')
+                action = input(f'Por favor, digite a ação desejada: SACAR, DEPOSITAR ou EXTRATO: ')
+                if action == 'SACAR':
+                    saque()
+                elif action == 'DEPOSITAR':    
+                    depositar(CPF_ver, users)
+                elif action == 'EXTRATO':    
+                    extrato()    
+
+    return CPF_ver               
                       
 ##caso não exista dicionario cadastrado, o input é feito e criado uma lista onde o dicionario é convertido e armazenado em JSON.                          
 ##caso exista dicionario cadastrado, o input é feito da mesma forma, mas o dicionario capturado é adicionado a lista existente, e logo convertida e armazenada em JSON.
@@ -37,7 +46,7 @@ def cadastro():
                 'nome_completo': input('Digite seu nome completo: '),
                 'idade': input('Digite sua idade: '),
                 'localizacao': input('Digite sua localização: '),
-                'saldo': 0
+                'saldo': int(0)
             }
 
         database = {CPF: usuario}
@@ -47,6 +56,17 @@ def cadastro():
         
     return users        
             
+def depositar(CPF_ver, users):
+    dep_valor = int(input('Digite a quantia a ser depositada: '))
+    for database in users:
+        for CPF in database:
+            if CPF == CPF_ver:
+                database[CPF]["saldo"] = database[CPF]["saldo"] + dep_valor
+                content = json.dumps(users)
+                path.write_text(content) 
+                print(f'{dep_valor} foi depositado com sucesso!')
+
+
 initial_ver = input('Você já possui uma conta? Digite SIM ou NAO: ').upper() #INICIO DO CÓDIGO
 if initial_ver == 'NAO':
     cadastro()
