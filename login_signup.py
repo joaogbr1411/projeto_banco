@@ -6,17 +6,26 @@ path = Path('user.json')
 ##verifica cada dicionario em busca do CPF correspondente e da boas vindas ao nome do mesmo
 def login(users):
     CPF_ver = input('Bem vindo de volta, informe seu CPF: ')
+    senha_ver = input('Digite sua senha: ')
     for database in users:
         for CPF in database:
-            if CPF == CPF_ver:
+            if CPF == CPF_ver and senha_ver == database[CPF]['senha']:                
                 print(f'Bem vindo, {database[CPF]["nome_completo"]}!')
-                action = input(f'Por favor, digite a ação desejada: SACAR, DEPOSITAR ou EXTRATO: ').upper()
-                if action == 'SACAR':
-                    saque(CPF_ver, users)
-                elif action == 'DEPOSITAR':    
-                    depositar(CPF_ver, users)
-                elif action == 'EXTRATO':    
-                    extrato(CPF_ver, users)    
+                while True:
+                    action = input(f'Por favor, digite a ação desejada: SACAR, DEPOSITAR ou EXTRATO. (Digite Q para deslogar): ').upper()
+                    if action == 'SACAR':
+                        saque(CPF_ver, users)
+                    elif action == 'DEPOSITAR':    
+                        depositar(CPF_ver, users)
+                    elif action == 'EXTRATO':    
+                        extrato(CPF_ver, users)    
+                    elif action == 'Q':                            
+                        print('Encerrando sistema... Até a próxima!')
+                        break
+                    else:
+                        print('Ação desconhecida.')
+            else:        
+                print('CPF ou senha incorreto. Por favor, verifique os dados inseridos.')
 
     return CPF_ver               
                       
@@ -30,7 +39,8 @@ def cadastro():
         usuario = {
                 'nome_completo': input('Digite seu nome completo: '),
                 'idade': input('Digite sua idade: '),
-                'localizacao': input('Digite sua localizacao '),
+                'localizacao': input('Digite sua localização: '),
+                'senha': input('Crie sua senha: '),
                 'saldo': 0
             }
         database = {CPF: usuario}
@@ -46,6 +56,7 @@ def cadastro():
                 'nome_completo': input('Digite seu nome completo: '),
                 'idade': input('Digite sua idade: '),
                 'localizacao': input('Digite sua localização: '),
+                'senha': input('Crie sua senha: '),
                 'saldo': int(0)
             }
 
@@ -68,7 +79,7 @@ def depositar(CPF_ver, users):
                 print(f'{dep_valor} foi depositado com sucesso!')
 
 def saque(CPF_ver, users):
-    saque = int(input('Digite a quantia a ser depositada: '))
+    saque = int(input('Digite a quantia para ser sacada: '))
     for database in users:
         for CPF in database:
             if CPF == CPF_ver:
