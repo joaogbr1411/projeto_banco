@@ -1,12 +1,15 @@
 from pathlib import Path
 import json
+import hashlib
 
 path = Path('user.json')
 
 ##verifica cada dicionario em busca do CPF correspondente e da boas vindas ao nome do mesmo
 def login(users):
     CPF_ver = input('Bem vindo de volta, informe seu CPF: ')
-    senha_ver = input('Digite sua senha: ')
+    Rawpass = input('Digite sua senha: ')
+    Rawpass = Rawpass.encode()
+    senha_ver = hashlib.sha256(Rawpass).hexdigest()
     for database in users:
         for CPF in database:
             if CPF == CPF_ver and senha_ver == database[CPF]['senha']:                
@@ -43,6 +46,10 @@ def cadastro():
                 'senha': input('Crie sua senha: '),
                 'saldo': 0
             }
+        
+        bytes = usuario['senha'].encode()
+        usuario['senha'] = hashlib.sha256(bytes).hexdigest()
+
         database = {CPF: usuario}
         users.append(database)
         content = json.dumps(users)
@@ -59,6 +66,9 @@ def cadastro():
                 'senha': input('Crie sua senha: '),
                 'saldo': int(0)
             }
+
+        bytes = usuario['senha'].encode()
+        usuario['senha'] = hashlib.sha256(bytes).hexdigest()
 
         database = {CPF: usuario}
         users = [database]
@@ -99,7 +109,7 @@ initial_ver = input('Você já possui uma conta? Digite SIM ou NAO: ').upper() #
 if initial_ver == 'NAO':
     cadastro()
 
-if initial_ver == 'SIM':    
+if initial_ver == 'SIM':   
     info = path.read_text() #CAPTURA AS INFORMAÇÕES
     users = json.loads(info)
     login(users)
